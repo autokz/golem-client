@@ -10,6 +10,7 @@ import (
 )
 
 const (
+	contentTypeJSON    = "text/json"
 	KindDirect         = amqp.ExchangeDirect
 	KindTopic          = amqp.ExchangeTopic
 	KindFanout         = amqp.ExchangeFanout
@@ -35,14 +36,13 @@ type Publisher struct {
 }
 
 type Params struct {
-	User        string
-	Password    string
-	Host        string
-	Port        uint32
-	MessageKey  string
-	Mandatory   bool
-	Immediate   bool
-	ContentType string
+	User       string
+	Password   string
+	Host       string
+	Port       uint32
+	MessageKey string
+	Mandatory  bool
+	Immediate  bool
 }
 
 type Exchange struct {
@@ -137,7 +137,7 @@ func (p Publisher) Publish(body []byte) error {
 		p.params.Mandatory,
 		p.params.Immediate,
 		amqp.Publishing{
-			ContentType: p.params.ContentType,
+			ContentType: contentTypeJSON,
 			Body:        body,
 		},
 	)
