@@ -7,7 +7,7 @@ import (
 
 const (
 	LevelInfo = iota
-	LevelWarning
+	LevelError
 	LevelFatal
 )
 
@@ -23,8 +23,8 @@ func Info(text string) error {
 	return send(LevelInfo, text)
 }
 
-func Message(text string) error {
-	return send(LevelWarning, text)
+func Error(text string) error {
+	return send(LevelError, text)
 }
 
 func Fatal(text string) error {
