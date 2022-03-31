@@ -10,10 +10,10 @@ import (
 )
 
 const (
-	KindDirect         = "direct"
-	KindTopic          = "topic"
-	KindFanout         = "fanout"
-	KindHeader         = "headers"
+	KindDirect         = amqp.ExchangeDirect
+	KindTopic          = amqp.ExchangeTopic
+	KindFanout         = amqp.ExchangeFanout
+	KindHeader         = amqp.ExchangeHeaders
 	pingInterval       = time.Second * 3
 	initTimeoutDefault = time.Second * 60
 )
