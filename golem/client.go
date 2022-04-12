@@ -6,9 +6,9 @@ import (
 )
 
 const (
-	LevelInfo = iota
+	LevelFatal = iota
 	LevelError
-	LevelFatal
+	LevelInfo
 )
 
 var ErrNilPublisher = errors.New("publisher is not set")
