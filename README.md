@@ -32,10 +32,17 @@ func main() {
 
 ```go
 
-    golem.Info("test info message")
+    golem.Info("test info message", 100)
     
-    golem.Error("test error message")
+    golem.Error("test error message", 409)
     
     golem.Fatal("test fatal message")
 
+```
+
+
+### Use Recover function to send panic messages and stack traces:
+
+```go
+    defer golem.Recover()
 ```
