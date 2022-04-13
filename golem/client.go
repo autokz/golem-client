@@ -3,35 +3,41 @@ package golem
 import (
 	"encoding/json"
 	"errors"
+	"log"
+	"runtime/debug"
 )
 
 const (
 	LevelFatal = iota
 	LevelError
 	LevelInfo
+	CodeFatal        = 500
+	CodePanic        = 555
+	TextUnknownPanic = "unknown panic"
 )
 
 var ErrNilPublisher = errors.New("publisher is not set")
 
 type Log struct {
-	Level   int    `json:"level"`
+	Level   uint32 `json:"level"`
 	Service string `json:"service"`
+	Code    uint32 `json:"code"`
 	Text    string `json:"text"`
 }
 
-func Info(text string) error {
-	return send(LevelInfo, text)
+func Info(text string, code uint32) error {
+	return send(text, LevelInfo, code)
 }
 
-func Error(text string) error {
-	return send(LevelError, text)
+func Error(text string, code uint32) error {
+	return send(text, LevelError, code)
 }
 
 func Fatal(text string) error {
-	return send(LevelFatal, text)
+	return send(text, LevelFatal, CodeFatal)
 }
 
-func send(level int, text string) error {
+func send(text string, level, code uint32) error {
 	if publisher == nil {
 		return ErrNilPublisher
 	}
@@ -40,6 +46,7 @@ func send(level int, text string) error {
 		Level:   level,
 		Service: publisher.service,
 		Text:    text,
+		Code:    code,
 	}
 
 	data, err := json.Marshal(msg)
@@ -48,4 +55,22 @@ func send(level int, text string) error {
 	}
 
 	return publisher.Publish(data)
+}
+
+func Recover() {
+	if r := recover(); r != nil {
+		var text string
+
+		switch err := r.(type) {
+		case string:
+			text = err
+		case error:
+			text = err.Error()
+		default:
+			log.Println(TextUnknownPanic, err)
+			text = TextUnknownPanic
+		}
+
+		_ = send(text+":\n"+string(debug.Stack()), LevelFatal, CodePanic)
+	}
 }
