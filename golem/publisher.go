@@ -28,6 +28,7 @@ var (
 )
 
 type Publisher struct {
+	project  string
 	service  string
 	params   *Params
 	exchange *Exchange
@@ -55,8 +56,12 @@ type Exchange struct {
 	Args       map[string]interface{}
 }
 
-func InitPublisher(service string, params *Params, exchange *Exchange) error {
+func InitPublisher(project, service string, params *Params, exchange *Exchange) error {
 	onceInit.Do(func() {
+		if project == "" {
+			errInit = errors.New("project name is required")
+			return
+		}
 		if service == "" {
 			errInit = errors.New("service name is required")
 			return
@@ -72,6 +77,7 @@ func InitPublisher(service string, params *Params, exchange *Exchange) error {
 		}
 
 		publisher = &Publisher{
+			project:  project,
 			service:  service,
 			params:   params,
 			exchange: exchange,

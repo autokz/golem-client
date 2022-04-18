@@ -20,6 +20,7 @@ var ErrNilPublisher = errors.New("publisher is not set")
 
 type Log struct {
 	Level   uint32 `json:"level"`
+	Project string `json:"project"`
 	Service string `json:"service"`
 	Code    uint32 `json:"code"`
 	Text    string `json:"text"`
@@ -44,6 +45,7 @@ func send(text string, level, code uint32) error {
 
 	msg := Log{
 		Level:   level,
+		Project: publisher.project,
 		Service: publisher.service,
 		Text:    text,
 		Code:    code,
