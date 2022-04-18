@@ -120,7 +120,11 @@ func (p *Publisher) connectInTime(timeout time.Duration) {
 
 func (p *Publisher) connectOnClose(timeout time.Duration) {
 	notify := make(chan *amqp.Error, 1)
-	defer close(notify)
+	defer func() {
+		if _, ok := <-notify; ok {
+			close(notify)
+		}
+	}()
 
 	p.conn.NotifyClose(notify)
 	for range notify {
