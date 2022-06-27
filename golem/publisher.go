@@ -10,13 +10,16 @@ import (
 )
 
 const (
-	contentTypeJSON    = "text/json"
-	KindDirect         = amqp.ExchangeDirect
-	KindTopic          = amqp.ExchangeTopic
-	KindFanout         = amqp.ExchangeFanout
-	KindHeader         = amqp.ExchangeHeaders
-	pingInterval       = time.Second * 3
-	initTimeoutDefault = time.Second * 60
+	contentTypeJSON     = "text/json"
+	KindDirect          = amqp.ExchangeDirect
+	KindTopic           = amqp.ExchangeTopic
+	KindFanout          = amqp.ExchangeFanout
+	KindHeader          = amqp.ExchangeHeaders
+	pingInterval        = time.Second * 3
+	initTimeoutDefault  = time.Second * 60
+	defaultMessageKey   = "log"
+	defaultExchangeName = "log-service.logs"
+	defaultExchangeKind = "x-delayed-message"
 )
 
 var (
@@ -74,6 +77,16 @@ func InitPublisher(project, service string, params *Params, exchange *Exchange) 
 		if exchange == nil {
 			errInit = errors.New("exchange is required")
 			return
+		}
+
+		if params.MessageKey == "" {
+			params.MessageKey = defaultMessageKey
+		}
+		if exchange.Name == "" {
+			exchange.Name = defaultExchangeName
+		}
+		if exchange.Kind == "" {
+			exchange.Kind = defaultExchangeKind
 		}
 
 		publisher = &Publisher{
